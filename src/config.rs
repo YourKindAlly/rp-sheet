@@ -23,16 +23,16 @@ pub fn create_config_file(config_contents: &ConfigContents) -> Result<()> {
 
 /// Ensures that the directory exists or is created. Panics if there is an error in the process.
 fn process_directory() {
-    match create_config_directory() {
+    let path = PathBuf::from("~/.config/rp-sheet");
+
+    match create_config_directory(&path) {
         Ok(_result) => {}
         Err(err) => panic!("There was an error when processing the config file: {err:?}"),
     }
 }
 
 /// Creates the directory in which the config file will be created into if it doesn't already exist.
-fn create_config_directory() -> Result<()> {
-    let path = PathBuf::from("~/.config/rp-sheet");
-
+fn create_config_directory(path: &PathBuf) -> Result<()> {
     if is_existing_path(&path) {
         return Ok(());
     }
@@ -72,5 +72,26 @@ mod tests {
         let path = PathBuf::from("test");
         let result = is_existing_path(&path);
         assert_eq!(result, false)
+    }
+
+    #[test]
+    fn test_create_config_in_testdir() {
+        let path = PathBuf::from("testdir");
+        let result = create_config_directory(&path).unwrap();
+        assert_eq!(result, ())
+    }
+
+    #[test]
+    fn test_create_config_in_test() {
+        let path = PathBuf::from("test");
+        let result = create_config_directory(&path).unwrap();
+        assert_eq!(result, ())
+    }
+
+    #[test]
+    fn test_create_config_in_testdiradmin() {
+        let path = PathBuf::from("testdiradmin");
+        let result = create_config_directory(&path).unwrap();
+        assert_eq!(result, ())
     }
 }

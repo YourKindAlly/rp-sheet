@@ -21,18 +21,6 @@ pub fn create_config_file(config_contents: &ConfigContents) -> Result<()> {
     fs::write(path, json)
 }
 
-/// Creates the directory in which the config file will be created into if it doesn't already exist.
-fn create_config_directory() -> Result<()> {
-    let path = PathBuf::from("~/.config/rp-sheet");
-
-    if is_existing_path(path) {
-        return Ok(());
-    }
-
-    fs::create_dir_all(path)?;
-    Ok(())
-}
-
 /// Ensures that the directory exists or is created. Panics if there is an error in the process.
 fn process_directory() {
     match create_config_directory() {
@@ -41,11 +29,25 @@ fn process_directory() {
     }
 }
 
+/// Creates the directory in which the config file will be created into if it doesn't already exist.
+fn create_config_directory() -> Result<()> {
+    let path = PathBuf::from("~/.config/rp-sheet");
+
+    if is_existing_path(path).unwrap() {
+        return Ok(());
+    }
+
+    fs::create_dir_all(path)?;
+    Ok(())
+}
+
 /// Returns whether the path exists or not. Panics if there is an error in the process.
-fn is_existing_path(path: PathBuf) -> bool {
+fn is_existing_path(path: PathBuf) -> Option<bool, String> {
     match fs::exists(path) {
-        Ok(result) => result,
-        Err(err) => panic!("There was an error when processing the config file: {err:?}"),
+        Ok(result) => Some(result),
+        Err(err) => None(String::from(
+            "There was an error when processing the config file: {err:?}",
+        )),
     }
 }
 
@@ -54,4 +56,16 @@ fn is_existing_path(path: PathBuf) -> bool {
 struct ConfigContents {
     sheet_template_dir: PathBuf,
     sheet_dir: PathBuf,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_is_existing_path() {
+        let path = PathBuf::from("testdir");
+        let result = is_existing_path(path).unwrap();
+        assert_eq!(result, true)
+    }
 }

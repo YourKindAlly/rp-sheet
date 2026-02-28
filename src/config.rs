@@ -7,24 +7,8 @@ use std::path::PathBuf;
  * @author Jasmine Regnér
  */
 
-/// Creates the config file in "~/.config/rp-sheet/config.json" if one doesn't already exist.
-pub fn create_config_file(config_contents: &ConfigContents) -> Result<()> {
-    process_directory();
-
-    let path = PathBuf::from("~/.config/rp-sheet/config.json");
-
-    if is_existing_path(&path) {
-        return Ok(());
-    }
-
-    let json = serde_json::to_string(config_contents).unwrap();
-    fs::write(path, json)
-}
-
 /// Ensures that the directory exists or is created. Panics if there is an error in the process.
-fn process_directory() {
-    let path = PathBuf::from("~/.config/rp-sheet");
-
+fn process_directory(path: &PathBuf) {
     match create_config_directory(&path) {
         Ok(_result) => {}
         Err(err) => panic!("There was an error when processing the config file: {err:?}"),

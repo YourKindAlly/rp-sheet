@@ -1,0 +1,6 @@
+# Rust specific ignores
+Cargo.lock
+target/**/*
+
+# Builds
+builds/**/*

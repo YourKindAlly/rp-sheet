@@ -13,7 +13,7 @@ pub fn create_config_file(config_contents: &ConfigContents) -> Result<()> {
 
     let path = PathBuf::from("~/.config/rp-sheet/config.json");
 
-    if let has_file = is_existing_path(path) {
+    if is_existing_path(&path) {
         return Ok(());
     }
 
@@ -24,7 +24,7 @@ pub fn create_config_file(config_contents: &ConfigContents) -> Result<()> {
 /// Ensures that the directory exists or is created. Panics if there is an error in the process.
 fn process_directory() {
     match create_config_directory() {
-        Ok(result) => {}
+        Ok(_result) => {}
         Err(err) => panic!("There was an error when processing the config file: {err:?}"),
     }
 }
@@ -33,27 +33,25 @@ fn process_directory() {
 fn create_config_directory() -> Result<()> {
     let path = PathBuf::from("~/.config/rp-sheet");
 
-    if is_existing_path(path).unwrap() {
+    if is_existing_path(&path) {
         return Ok(());
     }
 
-    fs::create_dir_all(path)?;
+    fs::create_dir_all(&path)?;
     Ok(())
 }
 
-/// Returns whether the path exists or not. Panics if there is an error in the process.
-fn is_existing_path(path: PathBuf) -> Option<bool, String> {
-    match fs::exists(path) {
-        Ok(result) => Some(result),
-        Err(err) => None(String::from(
-            "There was an error when processing the config file: {err:?}",
-        )),
+/// Returns true if the path exists, and false if it doesn't.
+fn is_existing_path(path: &PathBuf) -> bool {
+    match fs::exists(&path) {
+        Ok(result) => result,
+        Err(err) => panic!("There was an error when processing the config file: {err:?}"),
     }
 }
 
 /// A serializable struct that holds the config contents data.
 #[derive(Serialize, Deserialize)]
-struct ConfigContents {
+pub struct ConfigContents {
     sheet_template_dir: PathBuf,
     sheet_dir: PathBuf,
 }
@@ -63,9 +61,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_is_existing_path() {
+    fn testdir_path() {
         let path = PathBuf::from("testdir");
-        let result = is_existing_path(path).unwrap();
+        let result = is_existing_path(&path);
         assert_eq!(result, true)
+    }
+
+    #[test]
+    fn test_path() {
+        let path = PathBuf::from("test");
+        let result = is_existing_path(&path);
+        assert_eq!(result, false)
     }
 }

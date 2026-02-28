@@ -4,3 +4,6 @@ target/**/*
 
 # Builds
 builds/**/*
+
+# Tests
+testdir/**/*

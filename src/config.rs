@@ -41,7 +41,7 @@ fn create_config_directory(path: &PathBuf) -> Result<()> {
     Ok(())
 }
 
-/// Returns true if the path exists, and false if it doesn't.
+/// Returns true if the path exists, and false if it doesn't. Panics if neither can be returned.
 fn is_existing_path(path: &PathBuf) -> bool {
     match fs::exists(&path) {
         Ok(result) => result,
@@ -61,37 +61,28 @@ mod tests {
     use super::*;
 
     #[test]
-    fn testdir_path() {
-        let path = PathBuf::from("testdir");
+    fn test_create_config() {
+        let path = PathBuf::from("testdirs/user");
+        let result = create_config_directory(&path).unwrap();
+        assert_eq!(result, ());
+
+        let path = PathBuf::from("testdirs/admin");
+        let result = create_config_directory(&path).unwrap();
+        assert_eq!(result, ());
+    }
+
+    #[test]
+    fn test_path_exists() {
+        let path = PathBuf::from("testdirs/user");
         let result = is_existing_path(&path);
-        assert_eq!(result, true)
-    }
+        assert_eq!(result, true);
 
-    #[test]
-    fn test_path() {
-        let path = PathBuf::from("test");
+        let path = PathBuf::from("testdirs/admin");
         let result = is_existing_path(&path);
-        assert_eq!(result, false)
-    }
+        assert_eq!(result, true);
 
-    #[test]
-    fn test_create_config_in_testdir() {
-        let path = PathBuf::from("testdir");
-        let result = create_config_directory(&path).unwrap();
-        assert_eq!(result, ())
-    }
-
-    #[test]
-    fn test_create_config_in_test() {
-        let path = PathBuf::from("test");
-        let result = create_config_directory(&path).unwrap();
-        assert_eq!(result, ())
-    }
-
-    #[test]
-    fn test_create_config_in_testdiradmin() {
-        let path = PathBuf::from("testdiradmin");
-        let result = create_config_directory(&path).unwrap();
-        assert_eq!(result, ())
+        let path = PathBuf::from("testdirs/empty");
+        let result = is_existing_path(&path);
+        assert_eq!(result, false);
     }
 }

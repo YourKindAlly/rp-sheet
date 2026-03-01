@@ -2,7 +2,6 @@
  * @license MIT License
  * @author Jasmine Regnér
  */
-
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::Result;
@@ -20,7 +19,6 @@ fn create_config_file(path: &Path) {
     if result {
         return;
     }
-
 }
 
 /// Creates the directory in which the config file will be created into if it doesn't already exist.
@@ -49,7 +47,7 @@ pub fn is_existing_path(path: &Path) -> bool {
     }
 }
 
-pub fn create_config_conents(dir_path: &Path) -> ConfigContents {
+pub fn create_config_contents(dir_path: &Path) -> ConfigContents {
     let path = format!("{}/templates", dir_path.to_str().unwrap());
     let template_dir_path = PathBuf::from(path);
     ConfigContents::new(template_dir_path)
@@ -66,4 +64,3 @@ impl ConfigContents {
         Self { sheet_template_dir }
     }
 }
-

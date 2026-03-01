@@ -36,7 +36,7 @@ mod config_tests {
     #[test]
     fn test_create_config_contents() {
         let path = Path::new("testdirs/user");
-        let config = create_config_conents(path);
+        let config = create_config_contents(path);
         let config_template_path = PathBuf::from("testdirs/user/templates");
         assert_eq!(config.sheet_template_dir, config_template_path);
     }

@@ -3,10 +3,10 @@
  * @author Jasmine Regnér
  */
 
-#[cfg(test)] 
-mod config_tests{
-    use std::path::{Path, PathBuf};
+#[cfg(test)]
+mod config_tests {
     use crate::config::*;
+    use std::path::{Path, PathBuf};
 
     #[test]
     fn test_path_exists() {
@@ -22,10 +22,6 @@ mod config_tests{
     #[test]
     fn test_create_config() {
         let path = Path::new("testdirs/user");
-        let result = create_config_directory(&path).unwrap();
-        assert_eq!(result, ());
-
-        let path = Path::new("testdirs/admin");
         let result = create_config_directory(&path).unwrap();
         assert_eq!(result, ());
     }

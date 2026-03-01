@@ -1,24 +1,30 @@
-use serde::{Deserialize, Serialize};
-use std::fs;
-use std::io::Result;
-use std::path::{Path, PathBuf};
 /**
  * @license MIT License
  * @author Jasmine Regnér
  */
 
-/// Ensures that the directory exists or is created. Panics if there is an error in the process.
+use serde::{Deserialize, Serialize};
+use std::fs;
+use std::io::Result;
+use std::path::{Path, PathBuf};
+
+/// Creates the config file if one doesn't exist.
 fn create_config_file(path: &Path) {
     match create_config_directory(&path) {
         Ok(_result) => {}
         Err(err) => panic!("There was an error when processing the config file: {err:?}"),
     }
 
-    let dir_path = create_config_file_name(path);
+    let file_path = create_config_file_name(path);
+    let result = is_existing_path(&file_path);
+    if result {
+        return;
+    }
+
 }
 
 /// Creates the directory in which the config file will be created into if it doesn't already exist.
-fn create_config_directory(path: &Path) -> Result<()> {
+pub fn create_config_directory(path: &Path) -> Result<()> {
     if is_existing_path(path) {
         return Ok(());
     }
@@ -27,7 +33,8 @@ fn create_config_directory(path: &Path) -> Result<()> {
     Ok(())
 }
 
-fn create_config_file_name(dir_path: &Path) -> PathBuf {
+/// Takes the path directory and adds config.json to the path.
+pub fn create_config_file_name(dir_path: &Path) -> PathBuf {
     let mut file_path: PathBuf = PathBuf::from(dir_path);
     file_path.push("config");
     file_path.set_extension("json");
@@ -35,54 +42,28 @@ fn create_config_file_name(dir_path: &Path) -> PathBuf {
 }
 
 /// Returns true if the path exists, and false if it doesn't. Panics if neither can be returned.
-fn is_existing_path(path: &Path) -> bool {
+pub fn is_existing_path(path: &Path) -> bool {
     match fs::exists(&path) {
         Ok(result) => result,
         Err(err) => panic!("There was an error when processing the config file: {err:?}"),
     }
 }
 
+pub fn create_config_conents(dir_path: &Path) -> ConfigContents {
+    let path = format!("{}/templates", dir_path.to_str().unwrap());
+    let template_dir_path = PathBuf::from(path);
+    ConfigContents::new(template_dir_path)
+}
+
 /// A serializable struct that holds the config contents data.
 #[derive(Serialize, Deserialize)]
 pub struct ConfigContents {
-    sheet_template_dir: PathBuf,
-    sheet_dir: PathBuf,
+    pub sheet_template_dir: PathBuf,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_create_config() {
-        let path = Path::new("testdirs/user");
-        let result = create_config_directory(&path).unwrap();
-        assert_eq!(result, ());
-
-        let path = Path::new("testdirs/admin");
-        let result = create_config_directory(&path).unwrap();
-        assert_eq!(result, ());
-    }
-
-    #[test]
-    fn test_path_exists() {
-        let path = Path::new("testdirs/user");
-        let result = is_existing_path(&path);
-        assert_eq!(result, true);
-
-        let path = Path::new("testdirs/admin");
-        let result = is_existing_path(&path);
-        assert_eq!(result, true);
-
-        let path = Path::new("testdirs/empty");
-        let result = is_existing_path(&path);
-        assert_eq!(result, false);
-    }
-
-    #[test]
-    fn test_file_name() {
-        let path = Path::new("testdirs/user");
-        let result = create_config_file_name(path);
-        assert_eq!(result, PathBuf::from("testdirs/user/config.json"));
+impl ConfigContents {
+    pub fn new(sheet_template_dir: PathBuf) -> Self {
+        Self { sheet_template_dir }
     }
 }
+

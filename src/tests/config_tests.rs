@@ -49,4 +49,25 @@ mod config_tests {
         let comparison = String::from("{\"sheet_template_dir\":\"testdirs/user/templates\"}");
         assert_eq!(json, comparison)
     }
+
+    #[test]
+    fn test_write_to_config_file() {
+        let config_path = PathBuf::from("testdirs/user/config.json");
+        let template_path = Path::new("testdirs/user/templates");
+        let config = create_config_contents(&template_path);
+        let json = create_json(&config);
+
+        write_to_config_file(&config_path, &json);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_panic_write_to_config_file() {
+        let config_path = PathBuf::from("testdirs/admin/config.json");
+        let template_path = Path::new("testdirs/admin/templates");
+        let config = create_config_contents(&template_path);
+        let json = create_json(&config);
+
+        write_to_config_file(&config_path, &json);
+    }
 }

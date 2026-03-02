@@ -6,4 +6,4 @@ target/**/*
 builds/**/*
 
 # Tests
-testdir/**/*
+testdirs/**/*

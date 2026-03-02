@@ -8,19 +8,20 @@ use std::io::Result;
 use std::path::{Path, PathBuf};
 
 /// Creates the config file if one doesn't exist.
-fn create_config_file(path: &Path) {
-    match create_config_directory(&path) {
+fn create_config_file(config_path: &Path, template_path: &Path) {
+    match create_config_directory(&config_path) {
         Ok(_result) => {}
         Err(err) => panic!("There was an error when processing the config file: {err:?}"),
     }
 
-    let file_path = create_config_file_name(path);
-    let result = is_existing_path(&file_path);
-    if result {
+    let file_path = create_config_file_name(config_path);
+    if is_existing_path(&file_path) {
         return;
     }
 
-    let config = create_config_contents(path);
+    let config = create_config_contents(template_path);
+    let json = create_json(&config);
+    write_to_config_file(&file_path, &json);
 }
 
 /// Creates the directory in which the config file will be created into if it doesn't already exist.
@@ -61,6 +62,14 @@ pub fn create_json(config: &ConfigContents) -> String {
     match serde_json::to_string(config) {
         Ok(result) => result,
         Err(err) => panic!("There was an error when creating the config contents: {err:?}"),
+    }
+}
+
+/// Create and write to the config file in given directory using the json string. Panics if there is an error to create the file.
+pub fn write_to_config_file(path: &PathBuf, contents: &String) -> () {
+    match fs::write(path, contents) {
+        Ok(_result) => (),
+        Err(err) => panic!("There was an error when creating the config file: {err:?}"),
     }
 }
 

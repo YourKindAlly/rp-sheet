@@ -2,6 +2,7 @@
  * @license MIT License
  * @author Jasmine Regnér
  */
+mod app;
 mod config;
 mod tests;
 
@@ -9,5 +10,5 @@ mod tests;
 compile_error!("This app is only supported on Linux");
 
 fn main() {
-    println!("Hello world!")
+    println!("Hello world!");
 }

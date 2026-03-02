@@ -40,4 +40,13 @@ mod config_tests {
         let config_template_path = PathBuf::from("testdirs/user/templates");
         assert_eq!(config.sheet_template_dir, config_template_path);
     }
+
+    #[test]
+    fn test_create_json() {
+        let path = Path::new("testdirs/user");
+        let config = create_config_contents(path);
+        let json = create_json(config);
+        let comparison = String::from("{\"sheet_template_dir\":\"testdirs/user/templates\"}");
+        assert_eq!(json, comparison)
+    }
 }

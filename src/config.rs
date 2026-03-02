@@ -19,6 +19,8 @@ fn create_config_file(path: &Path) {
     if result {
         return;
     }
+
+    let config = create_config_contents(path);
 }
 
 /// Creates the directory in which the config file will be created into if it doesn't already exist.
@@ -51,6 +53,13 @@ pub fn create_config_contents(dir_path: &Path) -> ConfigContents {
     let path = format!("{}/templates", dir_path.to_str().unwrap());
     let template_dir_path = PathBuf::from(path);
     ConfigContents::new(template_dir_path)
+}
+
+pub fn create_json(config: ConfigContents) -> String {
+    match serde_json::to_string(&config) {
+        Ok(result) => result,
+        Err(err) => panic!("There was an error when creating the config contents: {err:?}"),
+    }
 }
 
 /// A serializable struct that holds the config contents data.

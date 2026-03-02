@@ -3,7 +3,17 @@
  * @author Jasmine Regnér
  */
 use crate::config::*;
+use home::home_dir;
 use std::path::PathBuf;
+
+pub fn get_home_dir() -> PathBuf {
+    match home_dir() {
+        Some(result) => result,
+        None => {
+            panic!("Couldn't find user's home directory.")
+        }
+    }
+}
 
 /// The rp-sheet application.
 pub struct App {
@@ -19,7 +29,6 @@ impl App {
         }
 
         let file_path = create_config_file_name(config_path);
-
         let config = create_config_contents(template_path);
 
         if is_existing_path(&file_path) {

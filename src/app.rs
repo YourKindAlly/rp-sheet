@@ -3,6 +3,7 @@
  * @author Jasmine Regnér
  */
 use crate::config::*;
+use clap::{Parser, Subcommand};
 use home::home_dir;
 use std::path::PathBuf;
 
@@ -16,9 +17,13 @@ pub fn get_home_dir() -> PathBuf {
 }
 
 /// The rp-sheet application.
-pub struct App {
-    config: ConfigContents,
-}
+#[derive(Parser)]
+#[command(
+    version,
+    about,
+    long_about = "The CLI application to create sheet and sheet templates for TTRPGs."
+)]
+pub struct App {}
 
 impl App {
     /// Creates a new app object.
@@ -32,12 +37,17 @@ impl App {
         let config = create_config_contents(template_path);
 
         if is_existing_path(&file_path) {
-            return Self { config };
+            return Self {};
         }
 
         let json = create_json(&config);
         write_to_config_file(&file_path, &json);
 
-        Self { config }
+        Self {}
     }
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    RpConfig,
 }

@@ -49,14 +49,16 @@ pub fn is_existing_path(path: &Path) -> bool {
     }
 }
 
+/// Returns an object of ConfigContentts. Takes a dir_path reference and appends "/template" to create the sheet_template_dir member.
 pub fn create_config_contents(dir_path: &Path) -> ConfigContents {
     let path = format!("{}/templates", dir_path.to_str().unwrap());
     let template_dir_path = PathBuf::from(path);
     ConfigContents::new(template_dir_path)
 }
 
-pub fn create_json(config: ConfigContents) -> String {
-    match serde_json::to_string(&config) {
+/// Returns a json formatted string from an object reference of ConfigContents
+pub fn create_json(config: &ConfigContents) -> String {
+    match serde_json::to_string(config) {
         Ok(result) => result,
         Err(err) => panic!("There was an error when creating the config contents: {err:?}"),
     }

@@ -45,7 +45,7 @@ mod config_tests {
     fn test_create_json() {
         let path = Path::new("testdirs/user");
         let config = create_config_contents(path);
-        let json = create_json(config);
+        let json = create_json(&config);
         let comparison = String::from("{\"sheet_template_dir\":\"testdirs/user/templates\"}");
         assert_eq!(json, comparison)
     }

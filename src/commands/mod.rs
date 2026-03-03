@@ -3,4 +3,4 @@
  * @author Jasmine Regnér
  */
 
- mod config;
+ pub mod config;

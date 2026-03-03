@@ -3,6 +3,7 @@
  * @author Jasmine Regnér
  */
 use crate::config_creator::*;
+use crate::commands::config::*;
 use clap::{Parser, Subcommand};
 use home::home_dir;
 use std::path::PathBuf;
@@ -32,7 +33,7 @@ pub struct App {
 
 impl App {
     /// Creates a new app object.
-    pub fn new(config_path: &PathBuf, template_path: &PathBuf) {
+    pub fn init(&self, config_path: &PathBuf, template_path: &PathBuf) {
         match create_config_directory(&config_path) {
             Ok(_result) => {}
             Err(err) => panic!("There was an error when processing the config file: {err:?}"),
@@ -42,17 +43,17 @@ impl App {
         let config = create_config_contents(template_path);
 
         if is_existing_path(&file_path) {
-            return;
+            return
         }
 
         let json = create_json(&config);
         write_to_config_file(&file_path, &json);
     }
 
-    fn process_command(&self) {
+    pub fn process_command(&self) {
         match self.command {
-            Some(Commands::Config) => {},
-            None => {}
+            Some(Commands::Config) => update_config_interactively(),
+            None => return,
         }
     }
 }

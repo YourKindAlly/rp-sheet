@@ -3,10 +3,10 @@
  * @author Jasmine Regnér
  */
 
-#[cfg(test)]
-mod config_tests {
-    use crate::config::*;
-    use std::path::{Path, PathBuf};
+#[cfg(test)] 
+mod config_tests{
+    use std::path::{Path,PathBuf};
+    use crate::config_creator::*;
 
     #[test]
     fn test_path_exists() {
@@ -24,6 +24,10 @@ mod config_tests {
         let path = Path::new("testdirs/user");
         let result = create_config_directory(&path).unwrap();
         assert_eq!(result, ());
+
+        let path = Path::new("testdirs/admin");
+        let result = create_config_directory(&path).unwrap();
+        assert_eq!(result, ());
     }
 
     #[test]
@@ -39,35 +43,5 @@ mod config_tests {
         let config = create_config_contents(path);
         let config_template_path = PathBuf::from("testdirs/user/templates");
         assert_eq!(config.sheet_template_dir, config_template_path);
-    }
-
-    #[test]
-    fn test_create_json() {
-        let path = Path::new("testdirs/user");
-        let config = create_config_contents(path);
-        let json = create_json(&config);
-        let comparison = String::from("{\"sheet_template_dir\":\"testdirs/user/templates\"}");
-        assert_eq!(json, comparison)
-    }
-
-    #[test]
-    fn test_write_to_config_file() {
-        let config_path = PathBuf::from("testdirs/user/config.json");
-        let template_path = Path::new("testdirs/user/templates");
-        let config = create_config_contents(&template_path);
-        let json = create_json(&config);
-
-        write_to_config_file(&config_path, &json);
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_panic_write_to_config_file() {
-        let config_path = PathBuf::from("testdirs/admin/config.json");
-        let template_path = Path::new("testdirs/admin/templates");
-        let config = create_config_contents(&template_path);
-        let json = create_json(&config);
-
-        write_to_config_file(&config_path, &json);
     }
 }

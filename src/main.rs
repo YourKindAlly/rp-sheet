@@ -3,7 +3,8 @@
  * @author Jasmine Regnér
  */
 mod app;
-mod config;
+mod config_creator;
+mod commands;
 mod tests;
 
 use crate::app::{App, get_home_dir};

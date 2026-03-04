@@ -8,7 +8,6 @@ mod commands;
 mod tests;
 
 use crate::app::{App, get_home_dir};
-use clap::Parser;
 
 #[cfg(not(target_os = "linux"))]
 compile_error!("This app is only supported on Linux");
@@ -20,7 +19,5 @@ fn main() {
     let mut template_path = get_home_dir();
     template_path.push("Documents/rp-sheet");
 
-    let app = App::parse();
-    app.init(&config_path, &template_path);
-    app.process_command();
+    App::init(&config_path, &template_path);
 }

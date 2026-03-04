@@ -37,11 +37,9 @@ pub fn update_config_interactively() {
     };
 
     let path = Path::new(&path_input);
+    let message = format!("Is this the path you want templates to be stored? {path:?}");
 
-    let confirmation_input =
-        Confirm::new("Is this the path you want templates to be stored? {path}")
-            .with_default(false)
-            .prompt();
+    let confirmation_input = Confirm::new(&message).with_default(false).prompt();
 
     let confirmation = match confirmation_input {
         Ok(result) => result,
@@ -53,7 +51,9 @@ pub fn update_config_interactively() {
 
     match confirmation {
         true => match create_config_directory(path) {
-            Ok(_result) => println!("Updated template sheet directory."),
+            Ok(_result) => {
+                println!("Updated template sheet directory.")
+            }
             Err(err) => {
                 println!("There was an error saving the template sheet directory: {err:?}");
                 return;

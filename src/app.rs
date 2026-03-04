@@ -4,7 +4,6 @@
  */
 use crate::config_writer::*;
 use crate::options::config::update_config_interactively;
-use home::home_dir;
 use inquire::{InquireError, Select};
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -14,12 +13,12 @@ pub struct App {}
 
 impl App {
     /// Creates a new app object.
-    pub fn init(config_path: &PathBuf, template_path: &PathBuf) {
+    pub fn init(config_path: &PathBuf, template_path: &PathBuf) -> Self {
         match create_config_directory(&config_path) {
             Ok(_result) => {}
             Err(err) => {
                 println!("There was an error when processing the config file: {err:?}");
-                return;
+                return Self {};
             }
         }
 
@@ -27,14 +26,15 @@ impl App {
         let config = create_config_contents(template_path);
 
         if is_existing_path(&file_path) {
-            return;
+            return Self {};
         }
 
         let json = create_json(&config);
         write_to_config_file(&file_path, &json);
+        Self {}
     }
 
-    fn display_options(&self) {
+    pub fn display_options(&self) {
         let mut options: HashMap<String, fn()> = HashMap::new();
         options.insert(
             String::from("Update the config file"),
@@ -63,15 +63,6 @@ impl App {
         };
 
         callback();
-    }
-}
-
-pub fn get_home_dir() -> PathBuf {
-    match home_dir() {
-        Some(result) => result,
-        None => {
-            panic!("Couldn't find user's home directory.")
-        }
     }
 }
 

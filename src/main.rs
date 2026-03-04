@@ -7,17 +7,27 @@ mod config_writer;
 mod options;
 mod tests;
 
-use crate::app::{App, get_home_dir};
+use crate::app::App;
+use home::home_dir;
 
 #[cfg(not(target_os = "linux"))]
 compile_error!("This app is only supported on Linux");
 
 fn main() {
-    let mut config_path = get_home_dir();
+    let home_path = match home_dir() {
+        Some(result) => result,
+        None => {
+            println!("Could not get the home directory.");
+            return;
+        }
+    };
+
+    let mut config_path = home_path.clone();
     config_path.push("Documents/rp-sheet");
 
-    let mut template_path = get_home_dir();
+    let mut template_path = home_path.clone();
     template_path.push("Documents/rp-sheet");
 
-    App::init(&config_path, &template_path);
+    let app = App::init(&config_path, &template_path);
+    app.display_options();
 }

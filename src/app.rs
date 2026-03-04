@@ -2,12 +2,12 @@
  * @license MIT License
  * @author Jasmine Regnér
  */
-use crate::config_creator::*;
-use crate::commands::config::update_config_interactively;
+use crate::config_writer::*;
+use crate::options::config::update_config_interactively;
 use home::home_dir;
-use std::path::PathBuf;
-use inquire::{Select, InquireError};
+use inquire::{InquireError, Select};
 use std::collections::HashMap;
+use std::path::PathBuf;
 
 /// The rp-sheet application.
 pub struct App {}
@@ -19,15 +19,15 @@ impl App {
             Ok(_result) => {}
             Err(err) => {
                 println!("There was an error when processing the config file: {err:?}");
-                return
-            },
+                return;
+            }
         }
 
         let file_path = create_config_file_name(config_path);
         let config = create_config_contents(template_path);
 
         if is_existing_path(&file_path) {
-            return
+            return;
         }
 
         let json = create_json(&config);
@@ -36,7 +36,10 @@ impl App {
 
     fn display_options(&self) {
         let mut options: HashMap<String, fn()> = HashMap::new();
-        options.insert(String::from("Update the config file"), update_config_interactively);
+        options.insert(
+            String::from("Update the config file"),
+            update_config_interactively,
+        );
 
         let result = fetch_user_selection(&options);
 
@@ -45,17 +48,17 @@ impl App {
             Err(err) => {
                 self.display_options();
                 println!("There was an error processing the option: {err:?}");
-                return
+                return;
             }
         };
-        
+
         let callback_option = options.get(&option);
         let callback = match callback_option {
             Some(result) => result,
             None => {
                 println!("No option was selected.");
                 self.display_options();
-                return
+                return;
             }
         };
 
@@ -73,5 +76,9 @@ pub fn get_home_dir() -> PathBuf {
 }
 
 pub fn fetch_user_selection(options: &HashMap<String, fn()>) -> Result<String, InquireError> {
-    Select::new("What would you like to do?", options.keys().cloned().collect()).prompt()
+    Select::new(
+        "What would you like to do?",
+        options.keys().cloned().collect(),
+    )
+    .prompt()
 }

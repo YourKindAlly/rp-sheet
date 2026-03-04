@@ -2,4 +2,4 @@
  * @license MIT License
  * @author Jasmine Regnér
  */
-mod config_writer_tests;
+pub mod config;

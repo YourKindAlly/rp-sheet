@@ -3,10 +3,10 @@
  * @author Jasmine Regnér
  */
 
-#[cfg(test)] 
-mod config_tests{
-    use std::path::{Path,PathBuf};
-    use crate::config_creator::*;
+#[cfg(test)]
+mod config_tests {
+    use crate::config_writer::*;
+    use std::path::{Path, PathBuf};
 
     #[test]
     fn test_path_exists() {

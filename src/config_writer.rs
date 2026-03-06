@@ -35,9 +35,12 @@ pub fn is_existing_path(path: &Path) -> bool {
 
 /// Returns an object of ConfigContentts. Takes a dir_path reference and appends "/template" to create the sheet_template_dir member.
 pub fn create_config_contents(dir_path: &Path) -> ConfigContents {
+    let sheet_path: PathBuf = PathBuf::from(dir_path);
+
     let path = format!("{}/templates", dir_path.to_str().unwrap());
     let template_dir_path = PathBuf::from(path);
-    ConfigContents::new(template_dir_path)
+
+    ConfigContents::new(template_dir_path, sheet_path)
 }
 
 /// Returns a json formatted string from an object reference of ConfigContents
@@ -60,10 +63,14 @@ pub fn write_to_config_file(path: &PathBuf, contents: &String) -> () {
 #[derive(Serialize, Deserialize)]
 pub struct ConfigContents {
     pub sheet_template_dir: PathBuf,
+    pub sheet_dir: PathBuf,
 }
 
 impl ConfigContents {
-    pub fn new(sheet_template_dir: PathBuf) -> Self {
-        Self { sheet_template_dir }
+    pub fn new(sheet_template_dir: PathBuf, sheet_dir: PathBuf) -> Self {
+        Self {
+            sheet_template_dir,
+            sheet_dir,
+        }
     }
 }

@@ -9,7 +9,9 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 /// The rp-sheet application.
-pub struct App {}
+pub struct App {
+    pub config: Option<ConfigContents>,
+}
 
 impl App {
     /// Creates a new app object.
@@ -18,7 +20,7 @@ impl App {
             Ok(_result) => {}
             Err(err) => {
                 println!("There was an error when processing the config file: {err:?}");
-                return Self {};
+                return Self { config: None };
             }
         }
 
@@ -26,12 +28,16 @@ impl App {
         let config = create_config_contents(template_path);
 
         if is_existing_path(&file_path) {
-            return Self {};
+            return Self {
+                config: Some(config),
+            };
         }
 
         let json = create_json(&config);
         write_to_config_file(&file_path, &json);
-        Self {}
+        Self {
+            config: Some(config),
+        }
     }
 
     pub fn display_options(&self) {

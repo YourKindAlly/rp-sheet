@@ -2,10 +2,10 @@
  * @license MIT License
  * @author Jasmine Regnér
  */
-use crate::config_writer::create_config_directory;
+use crate::config_writer::*;
 use inquire::{Confirm, Text, validator::Validation};
 use regex::Regex;
-use std::path::Path;
+use std::path::PathBuf;
 
 pub fn update_config_interactively() {
     let regex = match Regex::new(r"^(.*\/)([^\/]*)$") {
@@ -24,11 +24,11 @@ pub fn update_config_interactively() {
         }
     };
 
-    let result = Text::new("Which path do you want to put your sheet templates?")
+    let result = Text::new("In which directory do you want to store your sheet templates?")
         .with_validator(validator)
         .prompt();
 
-    let path_input = match result {
+    let template_path_input = match result {
         Ok(result) => result,
         Err(err) => {
             println!("There was an error when processing the input: {err:?}");
@@ -36,8 +36,25 @@ pub fn update_config_interactively() {
         }
     };
 
-    let path = Path::new(&path_input);
-    let message = format!("Is this the path you want templates to be stored? {path:?}");
+    let template_path = PathBuf::from(&template_path_input);
+
+    let result = Text::new("In which directory do you want to store your sheets?")
+        .with_validator(validator)
+        .prompt();
+
+    let sheet_path_input = match result {
+        Ok(result) => result,
+        Err(err) => {
+            println!("There was an error when processing the input: {err:?}");
+            return;
+        }
+    };
+
+    let sheet_path = PathBuf::from(&sheet_path_input);
+
+    let message = format!(
+        "Are these the paths you want to use for storage?\nSheet templates: {template_path:?}\nSheets: {sheet_path:?}"
+    );
 
     let confirmation_input = Confirm::new(&message).with_default(false).prompt();
 
@@ -50,7 +67,7 @@ pub fn update_config_interactively() {
     };
 
     match confirmation {
-        true => match create_config_directory(path) {
+        true => match create_config_directory(&template_path) {
             Ok(_result) => {
                 println!("Updated template sheet directory.")
             }

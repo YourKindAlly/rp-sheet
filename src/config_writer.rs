@@ -8,7 +8,7 @@ use std::io::Result;
 use std::path::{Path, PathBuf};
 
 /// Creates the directory in which the config file will be created into if it doesn't already exist.
-pub fn create_config_directory(path: &Path) -> Result<()> {
+pub fn create_config_directory(path: &PathBuf) -> Result<()> {
     if is_existing_path(path) {
         return Ok(());
     }

@@ -21,11 +21,11 @@ mod config_tests {
 
     #[test]
     fn test_create_config() {
-        let path = Path::new("testdirs/user");
+        let path = PathBuf::from("testdirs/user");
         let result = create_config_directory(&path).unwrap();
         assert_eq!(result, ());
 
-        let path = Path::new("testdirs/admin");
+        let path = PathBuf::from("testdirs/admin");
         let result = create_config_directory(&path).unwrap();
         assert_eq!(result, ());
     }

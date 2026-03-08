@@ -65,8 +65,8 @@ pub fn update_config_interactively() {
                 return
             }
 
-            let dir_path = create_config_path();
-            match create_config_directory(&dir_path) {
+            let config_path = create_config_path();
+            match create_config_directory(&config_path) {
                 Ok(_result) => {},
                 Err(err) => {
                     println!("There was an error when creating config directory: {err:?}");
@@ -75,7 +75,7 @@ pub fn update_config_interactively() {
             
             let contents = ConfigContents::new(template_path, sheet_path);
 
-            overwrite_config_file(&dir_path, &contents);
+            overwrite_config_file(&config_path, &contents);
         },
         Err(err) => {
             println!("There was an error when attempting to overwrite the config. Action aborted: {err:?}");

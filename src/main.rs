@@ -26,6 +26,6 @@ fn main() {
     let mut template_path = home_path.clone();
     template_path.push("Documents/rp-sheet");
 
-    let app = App::init(&config_path, &template_path);
+    let app = App::init(&config_path);
     app.display_options();
 }

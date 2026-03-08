@@ -8,6 +8,7 @@ use std::fs;
 use std::io::Result;
 use std::path::{Path, PathBuf};
 
+/// Gets path to the config file in "/home/user/Documents/rp_tool"
 pub fn create_config_path() -> PathBuf {
     let home_path = match home_dir() {
         Some(result) => result,
@@ -17,7 +18,7 @@ pub fn create_config_path() -> PathBuf {
     };
 
     let mut config_path = home_path.clone();
-    config_path.push("Documents/rp-sheet");
+    config_path.push("Documents/rp_tool");
     config_path
 }
 

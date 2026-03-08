@@ -15,7 +15,7 @@ pub struct App {
 
 impl App {
     /// Creates a new app object.
-    pub fn init(config_path: &PathBuf, tool_path: &PathBuf) -> Self {
+    pub fn init(config_path: &PathBuf) -> Self {
         match create_config_directory(&config_path) {
             Ok(_result) => {}
             Err(err) => {

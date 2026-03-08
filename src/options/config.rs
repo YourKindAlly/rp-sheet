@@ -7,6 +7,9 @@ use inquire::{Confirm, Text, validator::Validation};
 use regex::Regex;
 use std::path::PathBuf;
 
+/// Creates prompts for the user to respond to.
+/// Prompts for template path and sheeet path,
+/// then overwrites the config file.
 pub fn update_config_interactively() {
     let regex = match Regex::new(r"^(.*\/)([^\/]*)$") {
         Ok(result) => result,
@@ -64,18 +67,11 @@ pub fn update_config_interactively() {
                 println!("Aborting config overwrite.");
                 return
             }
-
-            let config_path = create_config_path();
-            match create_config_directory(&config_path) {
-                Ok(_result) => {},
-                Err(err) => {
-                    println!("There was an error when creating config directory: {err:?}");
-                }
-            }
             
+            let config_path = create_config_path();
             let contents = ConfigContents::new(template_path, sheet_path);
 
-            overwrite_config_file(&config_path, &contents);
+            overwrite_config_file(&config_path, &config_path, &contents);
         },
         Err(err) => {
             println!("There was an error when attempting to overwrite the config. Action aborted: {err:?}");
@@ -83,13 +79,17 @@ pub fn update_config_interactively() {
     }
 }
 
-fn overwrite_config_file(dir_path: &PathBuf, contents: &ConfigContents) {
-    let file_path = create_config_file_name(dir_path);
 
-    if is_existing_path(&file_path) {
-        return;
+/// Overwrites the config file if it exists. Otherwise it creates a new config file and writes into it.
+fn overwrite_config_file(dir_path: &PathBuf, config_path: &PathBuf, contents: &ConfigContents) {
+    match create_config_directory(&config_path) {
+        Ok(_result) => {},
+        Err(err) => {
+            println!("There was an error when creating config directory: {err:?}");
+        }
     }
 
+    let file_path = create_config_file_name(dir_path);
     let json = create_json(contents);
     write_to_config_file(&file_path, &json);
 }

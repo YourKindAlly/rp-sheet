@@ -3,9 +3,23 @@
  * @author Jasmine Regnér
  */
 use serde::{Deserialize, Serialize};
+use home::home_dir;
 use std::fs;
 use std::io::Result;
 use std::path::{Path, PathBuf};
+
+pub fn create_config_path() -> PathBuf {
+    let home_path = match home_dir() {
+        Some(result) => result,
+        None => {
+            panic!("Could not get the home directory.");
+        }
+    };
+
+    let mut config_path = home_path.clone();
+    config_path.push("Documents/rp-sheet");
+    config_path
+}
 
 /// Creates the directory in which the config file will be created into if it doesn't already exist.
 pub fn create_config_directory(path: &PathBuf) -> Result<()> {
@@ -31,16 +45,6 @@ pub fn is_existing_path(path: &Path) -> bool {
         Ok(result) => result,
         Err(err) => panic!("There was an error when processing the config file: {err:?}"),
     }
-}
-
-/// Returns an object of ConfigContentts. Takes a dir_path reference and appends "/template" to create the sheet_template_dir member.
-pub fn create_config_contents(dir_path: &Path) -> ConfigContents {
-    let sheet_path: PathBuf = PathBuf::from(dir_path);
-
-    let path = format!("{}/templates", dir_path.to_str().unwrap());
-    let template_dir_path = PathBuf::from(path);
-
-    ConfigContents::new(template_dir_path, sheet_path)
 }
 
 /// Returns a json formatted string from an object reference of ConfigContents

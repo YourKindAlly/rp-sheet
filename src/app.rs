@@ -5,39 +5,49 @@
 use crate::config_writer::*;
 use crate::options::config::update_config_interactively;
 use inquire::{InquireError, Select};
+use home::home_dir;
 use std::collections::HashMap;
 use std::path::PathBuf;
 
 /// The rp-sheet application.
 pub struct App {
-    pub config: Option<ConfigContents>,
 }
 
 impl App {
     /// Creates a new app object.
-    pub fn init(config_path: &PathBuf, template_path: &PathBuf) -> Self {
+    pub fn init(config_path: &PathBuf, tool_path: &PathBuf) -> Self {
         match create_config_directory(&config_path) {
             Ok(_result) => {}
             Err(err) => {
                 println!("There was an error when processing the config file: {err:?}");
-                return Self { config: None };
+                return Self {};
             }
         }
 
         let file_path = create_config_file_name(config_path);
-        let config = create_config_contents(template_path);
+
+        let home_path = match home_dir() {
+            Some(result) => result,
+            None => {
+                panic!("Could not get the home directory.");
+            }
+        };
+
+        let mut template_path = home_path.clone();
+        template_path.push("Documents/rp-tool/templates");
+
+        let mut sheet_path = home_path.clone();
+        sheet_path.push("Documents/rp-tool");
+
+        let config = ConfigContents::new(template_path, sheet_path);
 
         if is_existing_path(&file_path) {
-            return Self {
-                config: Some(config),
-            };
+            return Self {};
         }
 
         let json = create_json(&config);
         write_to_config_file(&file_path, &json);
-        Self {
-            config: Some(config),
-        }
+        Self {}
     }
 
     pub fn display_options(&self) {

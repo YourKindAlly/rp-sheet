@@ -58,27 +58,39 @@ pub fn update_config_interactively() {
 
     let confirmation_input = Confirm::new(&message).with_default(false).prompt();
 
-    let confirmation = match confirmation_input {
-        Ok(result) => result,
-        Err(err) => {
-            println!("There was an error when processing the confirmation: {err:?}");
-            return;
-        }
-    };
+    match confirmation_input {
+        Ok(confirmation) => {
+            if !confirmation {
+                println!("Aborting config overwrite.");
+                return
+            }
 
-    match confirmation {
-        true => match create_config_directory(&template_path) {
-            Ok(_result) => {
-                println!("Updated template sheet directory.")
+            let dir_path = create_config_path();
+            match create_config_directory(&dir_path) {
+                Ok(_result) => {},
+                Err(err) => {
+                    println!("There was an error when creating config directory: {err:?}");
+                }
             }
-            Err(err) => {
-                println!("There was an error saving the template sheet directory: {err:?}");
-                return;
-            }
+            
+            let contents = ConfigContents::new(template_path, sheet_path);
+
+            overwrite_config_file(&dir_path, &contents);
         },
-        false => {
-            println!("Aborting updating the config.");
-            return;
+        Err(err) => {
+            println!("There was an error when attempting to overwrite the config. Action aborted: {err:?}");
         }
     }
 }
+
+fn overwrite_config_file(dir_path: &PathBuf, contents: &ConfigContents) {
+    let file_path = create_config_file_name(dir_path);
+
+    if is_existing_path(&file_path) {
+        return;
+    }
+
+    let json = create_json(contents);
+    write_to_config_file(&file_path, &json);
+}
+

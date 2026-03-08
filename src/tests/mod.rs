@@ -2,4 +2,5 @@
  * @license MIT License
  * @author Jasmine Regnér
  */
-mod config_writer_tests;
+
+mod end_to_end_test;
